@@ -3,13 +3,15 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { SIMULATOR_NAME } from "./const";
+
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Life Simulator",
-  description: "A professional Conway's Game of Life simulation platform",
-  generator: "v0.app",
+  title: SIMULATOR_NAME,
+  description:
+    "A modern Conway's Game of Life project focused on frontend architecture, rendering and simulation systems",
   icons: {
     icon: [
       {

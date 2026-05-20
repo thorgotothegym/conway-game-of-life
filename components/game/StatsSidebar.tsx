@@ -21,7 +21,7 @@ const formatNumber = (value: number) => {
   return new Intl.NumberFormat("en-US").format(value);
 };
 
-export function StatsSidebar({
+export const StatsSidebar = ({
   generation,
   aliveCells,
   totalCells,
@@ -29,7 +29,7 @@ export function StatsSidebar({
   fps,
   gridSize,
   isRunning,
-}: StatsSidebarProps) {
+}: StatsSidebarProps) => {
   return (
     <div className="flex flex-col h-full rounded-xl border border-border/50 bg-card/60 backdrop-blur-md overflow-hidden">
       <div className="p-4 border-b border-border/50">
@@ -99,4 +99,4 @@ export function StatsSidebar({
       </div>
     </div>
   );
-}
+};

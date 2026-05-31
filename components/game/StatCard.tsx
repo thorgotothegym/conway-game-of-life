@@ -1,7 +1,9 @@
 "use client";
 
+import type { ComponentType } from "react";
+
 type StatCardProps = {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   label: string;
   value: string;
   subValue?: string;

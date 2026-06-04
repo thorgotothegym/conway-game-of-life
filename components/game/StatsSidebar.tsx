@@ -34,6 +34,9 @@ export const StatsSidebar = ({
     <div className="flex flex-col h-full rounded-xl border border-border/50 bg-card/60 backdrop-blur-md overflow-hidden">
       <div className="p-4 border-b border-border/50">
         <h2 className="text-sm font-semibold text-foreground">Statistics</h2>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">
+          Track how the simulation evolves over time.
+        </p>
       </div>
 
       <div className="p-4 space-y-6">

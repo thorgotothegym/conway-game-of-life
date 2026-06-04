@@ -48,18 +48,18 @@ const hasLiveCellsOnEdge = (grid: Grid) => {
 const getSimulationStatusMessage = (status: SimulationStatus) => {
   switch (status) {
     case "stable":
-      return "Stable pattern detected.";
+      return "The pattern has stabilized.";
     case "empty":
-      return "No live cells remaining.";
+      return "The simulation has ended. All cells have died.";
     case "boundary-reached":
-      return "Pattern reached the board boundary.";
+      return "The pattern has reached the edge of the board.";
     case "running":
-      return "Running";
+      return "Simulation running.";
     case "paused":
-      return "Paused";
+      return "Simulation paused.";
     case "idle":
     default:
-      return "Idle";
+      return "Choose a pattern or draw on the board to begin.";
   }
 };
 

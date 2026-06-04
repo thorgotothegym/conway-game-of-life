@@ -50,9 +50,9 @@ export const ControlsToolBar = ({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="flex items-center justify-between gap-6 px-4 py-3 rounded-xl border border-border/50 bg-card/80 backdrop-blur-md shadow-xl">
+      <div className="flex flex-wrap items-center justify-center gap-3 px-4 py-3 rounded-xl border border-border/50 bg-card/80 backdrop-blur-md shadow-xl lg:justify-between lg:gap-6">
         {/* Controls */}
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -87,9 +87,9 @@ export const ControlsToolBar = ({
           </Tooltip>
         </div>
 
-        <div className="h-6 w-px bg-border" />
+        <div className="hidden h-6 w-px bg-border lg:block" />
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Speed
           </span>
@@ -101,14 +101,14 @@ export const ControlsToolBar = ({
             step={10}
             className="w-32"
           />
-          <span className="text-xs text-muted-foreground font-mono w-14">
+          <span className="w-14 font-mono text-xs text-muted-foreground">
             {speedInGenPerSec} gen/s
           </span>
         </div>
 
-        <div className="h-6 w-px bg-border" />
+        <div className="hidden h-6 w-px bg-border lg:block" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" onClick={onRandomize} className="h-9 w-9">
@@ -132,9 +132,9 @@ export const ControlsToolBar = ({
           </Tooltip>
         </div>
 
-        <div className="h-6 w-px bg-border" />
+        <div className="hidden h-6 w-px bg-border lg:block" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" onClick={onExport} className="h-9 w-9">
@@ -154,7 +154,7 @@ export const ControlsToolBar = ({
           </Tooltip>
         </div>
 
-        <div className="h-6 w-px bg-border" />
+        <div className="hidden h-6 w-px bg-border lg:block" />
 
         <Tooltip>
           <TooltipTrigger asChild>

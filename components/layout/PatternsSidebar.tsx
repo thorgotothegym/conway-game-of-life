@@ -14,6 +14,8 @@ type PatternsSidebarProps = {
   onSelectPattern: (pattern: Pattern) => void;
 };
 
+type CategoryFilter = "all" | "spaceship" | "oscillator" | "still";
+
 const categoryIcons = {
   still: Box,
   oscillator: Zap,
@@ -28,14 +30,24 @@ const categoryLabels = {
   custom: "Custom",
 };
 
+const categoryFilters: Array<{ value: CategoryFilter; label: string }> = [
+  { value: "all", label: "All" },
+  { value: "spaceship", label: "Spaceships" },
+  { value: "oscillator", label: "Oscillators" },
+  { value: "still", label: "Still Lives" },
+];
+
 export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
 
-  const filteredPatterns = PATTERNS.filter(
-    (p) =>
+  const filteredPatterns = PATTERNS.filter((p) => {
+    const matchesSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase()),
-  );
+      p.description.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || p.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const groupedPatterns = filteredPatterns.reduce(
     (acc, pattern) => {
@@ -60,33 +72,66 @@ export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
             className="pl-9 h-9 bg-background/50 border-border/50 text-sm"
           />
         </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {categoryFilters.map((category) => {
+            const isActive = selectedCategory === category.value;
+
+            return (
+              <button
+                key={category.value}
+                type="button"
+                onClick={() => setSelectedCategory(category.value)}
+                className={[
+                  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                  isActive
+                    ? "border-primary/40 bg-primary/15 text-primary"
+                    : "border-border/60 bg-background/40 text-muted-foreground hover:bg-accent/60",
+                ].join(" ")}
+              >
+                {category.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Patterns List */}
       <ScrollArea className="flex-1">
         <div className="p-3 space-y-4">
-          {Object.entries(groupedPatterns).map(([category, patterns]) => {
-            const Icon = categoryIcons[category as keyof typeof categoryIcons];
-            return (
-              <div key={category}>
-                <div className="flex items-center gap-2 px-2 mb-2">
-                  <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    {categoryLabels[category as keyof typeof categoryLabels]}
-                  </span>
+          {selectedCategory === "all" ? (
+            Object.entries(groupedPatterns).map(([category, patterns]) => {
+              const Icon = categoryIcons[category as keyof typeof categoryIcons];
+              return (
+                <div key={category}>
+                  <div className="flex items-center gap-2 px-2 mb-2">
+                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      {categoryLabels[category as keyof typeof categoryLabels]}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    {patterns.map((pattern) => (
+                      <PatternItem
+                        key={pattern.id}
+                        pattern={pattern}
+                        onSelect={() => onSelectPattern(pattern)}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  {patterns.map((pattern) => (
-                    <PatternItem
-                      key={pattern.id}
-                      pattern={pattern}
-                      onSelect={() => onSelectPattern(pattern)}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="space-y-1">
+              {filteredPatterns.map((pattern) => (
+                <PatternItem
+                  key={pattern.id}
+                  pattern={pattern}
+                  onSelect={() => onSelectPattern(pattern)}
+                />
+              ))}
+            </div>
+          )}
 
           {filteredPatterns.length === 0 && (
             <div className="text-center py-8 text-muted-foreground text-sm">No patterns found</div>

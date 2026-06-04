@@ -40,6 +40,12 @@ const categoryFilters: Array<{ value: CategoryFilter; label: string }> = [
 export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
+  const [selectedPattern, setSelectedPattern] = useState<{ id: string; name: string } | null>(null);
+
+  const handleSelectPattern = (pattern: Pattern) => {
+    setSelectedPattern({ id: pattern.id, name: pattern.name });
+    onSelectPattern(pattern);
+  };
 
   const filteredPatterns = PATTERNS.filter((p) => {
     const matchesSearch =
@@ -111,11 +117,19 @@ export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
                   </div>
                   <div className="space-y-1">
                     {patterns.map((pattern) => (
-                      <PatternItem
+                      <div
                         key={pattern.id}
-                        pattern={pattern}
-                        onSelect={() => onSelectPattern(pattern)}
-                      />
+                        className={
+                          selectedPattern?.id === pattern.id
+                            ? "rounded-lg bg-primary/10 ring-1 ring-primary/40"
+                            : "rounded-lg"
+                        }
+                      >
+                        <PatternItem
+                          pattern={pattern}
+                          onSelect={() => handleSelectPattern(pattern)}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -124,11 +138,16 @@ export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
           ) : (
             <div className="space-y-1">
               {filteredPatterns.map((pattern) => (
-                <PatternItem
+                <div
                   key={pattern.id}
-                  pattern={pattern}
-                  onSelect={() => onSelectPattern(pattern)}
-                />
+                  className={
+                    selectedPattern?.id === pattern.id
+                      ? "rounded-lg bg-primary/10 ring-1 ring-primary/40"
+                      : "rounded-lg"
+                  }
+                >
+                  <PatternItem pattern={pattern} onSelect={() => handleSelectPattern(pattern)} />
+                </div>
               ))}
             </div>
           )}

@@ -1,8 +1,7 @@
 "use client";
 
-import { Activity, Clock, Cpu, Grid3X3 } from "lucide-react";
+import { Activity, Clock, Cpu, ExternalLink, Github, Grid3X3 } from "lucide-react";
 
-import { GAME_NAME } from "@/app/const";
 import { Progress } from "@/components/ui/progress";
 
 import { StatCard } from "./StatCard";
@@ -95,10 +94,38 @@ export const StatsSidebar = ({
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-auto p-4 border-t border-border/50">
-        <div className="text-[10px] text-muted-foreground text-center">{GAME_NAME}</div>
+        <div className="border-t border-border/50 pt-4 space-y-2">
+          <p className="text-[10px] text-muted-foreground">
+            Built by <span className="font-medium text-foreground/90">Aleix Vidal</span>
+          </p>
+
+          <div className="flex items-center gap-3 text-[11px]">
+            <a
+              href="https://aleixvidal.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ExternalLink className="h-3 w-3" />
+              <span>Portfolio</span>
+            </a>
+
+            <span className="text-border" aria-hidden="true">
+              •
+            </span>
+
+            <a
+              href="https://github.com/thorgotothegym/conway-game-of-life"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Github className="h-3 w-3" />
+              <span>GitHub</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "dev:open": "start http://localhost:3000 && pnpm dev",
+    "dev:open": "start http://localhost:3001 && pnpm dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

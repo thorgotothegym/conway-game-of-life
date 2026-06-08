@@ -148,11 +148,15 @@ export default function GameOfLifePage() {
         <main className="flex min-w-0 flex-1 flex-col items-center gap-6 overflow-auto px-0 lg:px-6 lg:py-6">
           <section className="w-full max-w-3xl rounded-xl border border-border/50 bg-card/60 px-4 py-4 text-sm text-muted-foreground backdrop-blur-md lg:px-5">
             <p>
-              Conway’s Game of Life is a cellular automaton where simple rules create complex
-              patterns over generations.
+              This is Conway’s Game of Life: a small simulation where simple rules create surprising
+              patterns.
             </p>
-            <p className="mt-2">
-              Start with a predefined pattern or search for one to explore different behaviors.
+            <p className="mt-2 text-center">
+              Rules: Live cells survive with 2–3 neighbours. Dead cells are born with exactly 3
+              neighbours. Everything else fades away.
+            </p>
+            <p className="mt-2 text-center">
+              Pick a pattern, press Play, or draw on the board to experiment.
             </p>
           </section>
 

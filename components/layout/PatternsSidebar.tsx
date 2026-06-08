@@ -75,7 +75,6 @@ export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border/50 bg-card/60 backdrop-blur-md">
-      {/* Header */}
       <div className="p-4 border-b border-border/50">
         <h2 className="text-sm font-semibold text-foreground mb-3">Patterns</h2>
         <div className="relative">
@@ -89,7 +88,6 @@ export const PatternsSidebar = ({ onSelectPattern }: PatternsSidebarProps) => {
         </div>
       </div>
 
-      {/* Patterns List */}
       <ScrollArea className="min-h-0 flex-1">
         <div className="p-3 space-y-4">
           {categoryOrder.map((category) => {

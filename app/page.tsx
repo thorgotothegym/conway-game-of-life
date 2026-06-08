@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ControlsToolBar } from "@/components/game/ControlsToolBar";
 import { SimulationGrid } from "@/components/game/SimulationGrid";
@@ -33,6 +33,13 @@ export default function GameOfLifePage() {
     addPattern,
   } = useGameOfLife({ initialRows: 50, initialCols: 70 });
 
+  const boardViewportRef = useRef<HTMLDivElement | null>(null);
+  const [boardViewportSize, setBoardViewportSize] = useState({ width: 0, height: 0 });
+
+  const handleClear = useCallback(() => {
+    clear();
+  }, [clear]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const { target, key, preventDefault } = event;
@@ -52,14 +59,14 @@ export default function GameOfLifePage() {
           randomize();
           break;
         case "c":
-          clear();
+          handleClear();
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggle, step, randomize, clear, isRunning]);
+  }, [toggle, step, randomize, handleClear, isRunning]);
 
   const handleSelectPattern = useCallback(
     (pattern: Pattern) => {
@@ -98,23 +105,65 @@ export default function GameOfLifePage() {
     input.click();
   }, [setGrid]);
 
-  const getCellSize = () => {
-    if (gridSize.cols > 100) return 8;
-    if (gridSize.cols > 70) return 10;
-    return 12;
-  };
+  useEffect(() => {
+    const element = boardViewportRef.current;
+    if (!element) return;
+
+    const updateSize = () => {
+      setBoardViewportSize({ width: element.clientWidth, height: element.clientHeight });
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const cellSize = useMemo(() => {
+    const fallbackSize = 12;
+
+    if (boardViewportSize.width === 0 || boardViewportSize.height === 0) {
+      return fallbackSize;
+    }
+
+    const availableCellSize = Math.min(
+      boardViewportSize.width / gridSize.cols,
+      boardViewportSize.height / gridSize.rows,
+    );
+
+    return Math.max(4, Math.min(14, Math.floor(availableCellSize)));
+  }, [boardViewportSize.height, boardViewportSize.width, gridSize.cols, gridSize.rows]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex min-h-screen flex-col overflow-hidden lg:h-screen">
       <Header gridSize={gridSize} onGridSizeChange={updateGridSize} />
 
-      <div className="flex-1 flex overflow-hidden">
-        <aside className="w-64 p-4 shrink-0">
+      <div className="flex flex-1 min-h-0 flex-col gap-4 overflow-hidden p-4 lg:flex-row lg:gap-0 lg:p-0">
+        <aside className="w-full shrink-0 min-h-0 overflow-hidden lg:w-64 lg:p-4">
           <PatternsSidebar onSelectPattern={handleSelectPattern} />
         </aside>
 
-        <main className="flex-1 flex flex-col items-center justify-center gap-6 p-6 overflow-auto">
-          <SimulationGrid grid={grid} onCellToggle={toggleCell} cellSize={getCellSize()} />
+        <main className="flex min-w-0 flex-1 flex-col items-center gap-6 overflow-auto px-0 lg:px-6 lg:py-6">
+          <section className="w-full max-w-3xl rounded-xl border border-border/50 bg-card/60 px-4 py-4 text-sm text-muted-foreground backdrop-blur-md lg:px-5">
+            <p>
+              Conway’s Game of Life is a cellular automaton where simple rules create complex
+              patterns over generations.
+            </p>
+            <p className="mt-2">
+              Start with a predefined pattern or search for one to explore different behaviors.
+            </p>
+          </section>
+
+          <div
+            ref={boardViewportRef}
+            className="w-full min-h-[55vh] min-w-0 overflow-auto lg:flex-1 lg:min-h-0"
+          >
+            <div className="flex w-full justify-center lg:justify-center">
+              <SimulationGrid grid={grid} onCellToggle={toggleCell} cellSize={cellSize} />
+            </div>
+          </div>
 
           <div className="flex flex-col items-center gap-2">
             <ControlsToolBar
@@ -122,7 +171,7 @@ export default function GameOfLifePage() {
               speed={speed}
               onToggle={toggle}
               onStep={step}
-              onClear={clear}
+              onClear={handleClear}
               onRandomize={randomize}
               onSpeedChange={setSpeed}
               onExport={handleExport}
@@ -135,7 +184,7 @@ export default function GameOfLifePage() {
           </div>
         </main>
 
-        <aside className="w-64 p-4 shrink-0">
+        <aside className="w-full shrink-0 lg:w-64 lg:p-4">
           <StatsSidebar
             generation={generation}
             aliveCells={aliveCells}

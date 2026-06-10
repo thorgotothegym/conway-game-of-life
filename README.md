@@ -1,19 +1,24 @@
-# Conway Game of Life
+# Conway's Game of Life
 
-A modern implementation of Conway’s Game of Life built with Next.js, React and TypeScript.
+A modern implementation of Conway's Game of Life built with Next.js, React and TypeScript.
 
-The goal of this project is not just to recreate the classic simulation, but to use it as a playground to experiment with frontend architecture, rendering strategies, performance optimizations and backend development with Python.
+The goal of this project is not just to recreate the classic simulation, but to use it as a playground to experiment with frontend architecture, rendering strategies, performance optimizations and, eventually, backend development with Python.
 
-Instead of building another traditional CRUD application, I wanted to create something more engineering-oriented where I can explore:
+Instead of building another traditional CRUD application, I wanted to create something a little different: a project where I could explore how simple rules can lead to surprisingly rich behaviours while continuously iterating on both the technical implementation and the user experience.
 
-- simulation systems
-- rendering performance
-- state management
-- visualization patterns
-- frontend architecture
-- backend APIs
+Along the way, Conway became less of an experiment and more of a small product that I genuinely enjoyed polishing and shipping.
 
-The project is heavily inspired by modern developer tools and products such as Raycast, Linear and Vercel.
+---
+
+## Public Release
+
+🚀 **Conway's Game of Life v1.0.0**
+
+Live demo:
+
+https://life.aleixvidal.dev
+
+The current version focuses on delivering a polished desktop-first experience while serving as a playground for experimentation, architecture and iterative product improvements.
 
 ---
 
@@ -34,52 +39,23 @@ The project is heavily inspired by modern developer tools and products such as R
 - Husky
 - lint-staged
 - Knip
-
-### Planned Backend
-
-- FastAPI
-- PostgreSQL
+- Vitest
 
 ---
 
-## Goals
+## Features
 
-Some of the main goals of this project are:
-
-- Experiment with different rendering strategies
-- Explore frontend architecture patterns
-- Improve rendering and UI performance
-- Learn backend development with Python and FastAPI
-- Build a more engineering-focused project
-- Create a clean and polished developer-oriented experience
-
----
-
-## Current Status
-
-Early development phase.
-
-Current focus:
-
-- Simulation grid
-- Cell interactions
-- Play / pause controls
-- Rendering architecture
-- UI cleanup and component organization
-
----
-
-## Planned Features
-
-- Pattern presets
+- Interactive Conway simulation
+- Play, pause and step controls
+- Pattern library including spaceships, oscillators and still lives
+- Manual board editing
 - Simulation statistics
-- Save/load simulations
-- Backend persistence
-- Real-time updates
-- Performance benchmarks
-- Infinite grid experiments
-- WebSocket support
-- Rendering optimizations
+- Friendly onboarding experience
+- Pattern selection highlighting
+- Sidebar filtering and navigation
+- Keyboard shortcuts
+- Import and export support
+- Desktop-first experience with mobile guidance
 
 ---
 
@@ -93,7 +69,23 @@ The UI is inspired by:
 - Modern macOS applications
 - Engineering dashboards
 
-The idea is to create a clean and modern simulation platform rather than a game-oriented interface.
+The goal is to create a clean and modern simulation platform rather than a game-oriented interface.
+
+---
+
+## Future Exploration
+
+Some ideas I may explore in future iterations include:
+
+- Backend persistence
+- Save and share simulations
+- Infinite grid experiments
+- Performance benchmarks
+- Real-time collaboration
+- WebSocket support
+- Additional rendering strategies
+
+The project evolves incrementally, guided by curiosity, experimentation and whatever feels worth building next.
 
 ---
 
@@ -133,6 +125,8 @@ pnpm check
 
 ## Notes
 
-This project is intentionally being built incrementally.
+This project is intentionally built incrementally.
 
-The focus is on experimentation, learning and architecture decisions rather than trying to over-engineer everything from the beginning.
+The focus is on experimentation, learning and shipping ideas rather than trying to over-engineer everything from the beginning.
+
+Sometimes the most interesting projects start as a small idea you're not entirely sure you'll finish.

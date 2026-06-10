@@ -146,6 +146,14 @@ export default function GameOfLifePage() {
         </aside>
 
         <main className="flex min-w-0 flex-1 flex-col items-center gap-6 overflow-auto px-0 lg:px-6 lg:py-6">
+          <section className="w-full max-w-3xl rounded-xl border border-border/50 bg-card/60 px-4 py-3 text-xs text-muted-foreground backdrop-blur-md md:hidden">
+            <p className="font-mono">[mobile note]</p>
+            <p className="mt-1 text-balance">
+              Designed for desktop. You can still explore Conway on mobile, but you will probably
+              enjoy it more on a larger screen.
+            </p>
+          </section>
+
           <section className="w-full max-w-3xl rounded-xl border border-border/50 bg-card/60 px-4 py-4 text-sm text-muted-foreground backdrop-blur-md lg:px-5">
             <p>
               This is Conway’s Game of Life: a small simulation where simple rules create surprising

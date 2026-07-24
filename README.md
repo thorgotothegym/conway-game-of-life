@@ -22,6 +22,47 @@ The current version focuses on delivering a polished desktop-first experience wh
 
 ---
 
+## Architecture & Design Decisions
+
+### Responsibility-Driven Structure
+
+The project is organized by **responsibility**, not by feature:
+
+- **`app/`** - Next.js routing and main app composition
+- **`components/game/`** - Domain-specific components (Conway simulation)
+- **`components/layout/`** - Layout and navigation components
+- **`components/ui/`** - Reusable design system components (shadcn/ui)
+- **`hooks/`** - Custom React hooks for high-level state management
+- **`lib/`** - Pure business logic and domain utilities (zero React dependencies)
+- **`tests/`** - Unit tests for domain logic
+
+### Why This Structure?
+
+**Separation of Concerns**: Business logic (`lib/`) is completely decoupled from React, making it:
+
+- Testable without rendering components
+- Reusable in different contexts (CLI, backend, etc)
+- Easier to reason about and modify
+
+**Domain-Driven Design**: Game logic lives in `lib/`, UI components consume it via hooks. Changes to simulation rules don't touch the UI layer.
+
+**Scalability**: Adding new features (patterns library, import/export, persistence) doesn't require restructuring. New logic goes in `lib/`, new components in `components/game/`.
+
+### Key Technical Decisions
+
+- **Next.js** for server-side rendering, optimized builds, and native API routes (future persistence)
+- **TypeScript** for type safety in complex state management
+- **shadcn/ui + Tailwind** for a customizable, minimal component system
+- **Vitest** for fast, ESM-native testing of domain logic
+- **Husky + lint-staged** to enforce code quality at commit time
+
+### What Works Well
+
+- Pure domain logic is easy to test and reason about
+- UI components are simple and focused on presentation
+- Hooks provide a clean boundary between React and business logic
+- The structure scales without major refactoring
+
 ## Tech Stack
 
 ### Frontend

@@ -173,7 +173,12 @@ export default function GameOfLifePage() {
             className="w-full min-h-[55vh] min-w-0 overflow-auto lg:flex-1 lg:min-h-0"
           >
             <div className="flex w-full justify-center lg:justify-center">
-              <SimulationGrid grid={grid} onCellToggle={toggleCell} cellSize={cellSize} />
+              <SimulationGrid
+                grid={grid}
+                onCellToggle={toggleCell}
+                cellSize={cellSize}
+                isRunning={isRunning}
+              />
             </div>
           </div>
 

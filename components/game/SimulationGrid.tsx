@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEventHandler } from "react";
 import { memo, useCallback, useRef, useState } from "react";
 
 import type { Grid } from "@/lib/game-of-life";
@@ -10,49 +11,138 @@ type SimulationGridProps = {
   grid: Grid;
   onCellToggle: (row: number, col: number) => void;
   cellSize?: number;
+  isRunning: boolean;
+};
+
+type GridRef = { current: Grid };
+type BooleanRef = { current: boolean };
+type StringRef = { current: string | null };
+
+type InteractionRefs = {
+  gridRef: GridRef;
+  isDraggingRef: BooleanRef;
+  dragValueRef: BooleanRef;
+  lastCellRef: StringRef;
+};
+
+const parseCellCoordinates = (dataset: DOMStringMap) => {
+  const row = Number(dataset.row);
+  const col = Number(dataset.column);
+
+  if (!Number.isInteger(row) || !Number.isInteger(col)) {
+    return null;
+  }
+
+  return { row, col };
+};
+
+const getCellAliveValue = (grid: Grid, row: number, col: number) => {
+  if (row < 0 || row >= grid.length) return null;
+  const gridRow = grid[row];
+  if (col < 0 || col >= gridRow.length) return null;
+  return gridRow[col];
+};
+
+export const handleCellMouseDownFromDataset = (
+  dataset: DOMStringMap,
+  refs: InteractionRefs,
+  onCellToggle: (row: number, col: number) => void,
+) => {
+  const coords = parseCellCoordinates(dataset);
+  if (!coords) return;
+
+  const { row, col } = coords;
+  const currentAlive = getCellAliveValue(refs.gridRef.current, row, col);
+  if (currentAlive === null) return;
+
+  const nextValue = !currentAlive;
+
+  refs.isDraggingRef.current = true;
+  refs.dragValueRef.current = nextValue;
+  refs.lastCellRef.current = `${row}-${col}`;
+
+  onCellToggle(row, col);
+};
+
+export const handleCellMouseEnterFromDataset = (
+  dataset: DOMStringMap,
+  refs: InteractionRefs,
+  onCellToggle: (row: number, col: number) => void,
+) => {
+  if (!refs.isDraggingRef.current) return;
+
+  const coords = parseCellCoordinates(dataset);
+  if (!coords) return;
+
+  const { row, col } = coords;
+  const cellKey = `${row}-${col}`;
+
+  if (cellKey === refs.lastCellRef.current) return;
+  refs.lastCellRef.current = cellKey;
+
+  const currentAlive = getCellAliveValue(refs.gridRef.current, row, col);
+  if (currentAlive === null) return;
+
+  const shouldBeAlive = refs.dragValueRef.current;
+  if (currentAlive !== shouldBeAlive) {
+    onCellToggle(row, col);
+  }
+};
+
+export const stopCellDrag = (refs: Pick<InteractionRefs, "isDraggingRef" | "lastCellRef">) => {
+  refs.isDraggingRef.current = false;
+  refs.lastCellRef.current = null;
 };
 
 export const SimulationGrid = memo(function SimulationGrid({
   grid,
   onCellToggle,
   cellSize = 12,
+  isRunning,
 }: SimulationGridProps) {
-  const [isDragging, setIsDragging] = useState(false);
   const [_, setDragValue] = useState(true);
+  const gridRef = useRef(grid);
+  const isDraggingRef = useRef(false);
+  const dragValueRef = useRef(true);
   const lastCellRef = useRef<string | null>(null);
 
-  const handleCellInteraction = useCallback(
-    (row: number, col: number, isNewDrag: boolean = false) => {
-      const cellKey = `${row}-${col}`;
-      if (!isNewDrag && cellKey === lastCellRef.current) return;
+  gridRef.current = grid;
 
-      lastCellRef.current = cellKey;
-      onCellToggle(row, col);
+  const handleMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      handleCellMouseDownFromDataset(
+        event.currentTarget.dataset,
+        {
+          gridRef,
+          isDraggingRef,
+          dragValueRef,
+          lastCellRef,
+        },
+        onCellToggle,
+      );
+      setDragValue(dragValueRef.current);
     },
     [onCellToggle],
   );
 
-  const handleMouseDown = useCallback(
-    (row: number, col: number) => {
-      setIsDragging(true);
-      setDragValue(!grid[row][col]);
-      handleCellInteraction(row, col, true);
+  const handleMouseEnter: MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      handleCellMouseEnterFromDataset(
+        event.currentTarget.dataset,
+        {
+          gridRef,
+          isDraggingRef,
+          dragValueRef,
+          lastCellRef,
+        },
+        onCellToggle,
+      );
     },
-    [grid, handleCellInteraction],
-  );
-
-  const handleMouseEnter = useCallback(
-    (row: number, col: number) => {
-      if (isDragging) {
-        handleCellInteraction(row, col);
-      }
-    },
-    [isDragging, handleCellInteraction],
+    [onCellToggle],
   );
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    lastCellRef.current = null;
+    stopCellDrag({ isDraggingRef, lastCellRef });
   }, []);
 
   const rows = grid.length;
@@ -60,7 +150,8 @@ export const SimulationGrid = memo(function SimulationGrid({
 
   return (
     <div
-      className="relative rounded-xl overflow-hidden border border-border/50 bg-card/30 backdrop-blur-sm shadow-2xl"
+      data-running={isRunning ? "true" : "false"}
+      className="relative rounded-xl overflow-hidden border border-border/50 bg-card/30 backdrop-blur-sm shadow-2xl data-[running=true]:[&_div.cell-alive]:shadow-none"
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
@@ -80,8 +171,10 @@ export const SimulationGrid = memo(function SimulationGrid({
               key={`${rowIndex}-${colIndex}`}
               alive={cell}
               size={cellSize}
-              onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-              onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+              row={rowIndex}
+              column={colIndex}
+              onMouseDown={handleMouseDown}
+              onMouseEnter={handleMouseEnter}
             />
           )),
         )}

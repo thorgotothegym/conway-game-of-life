@@ -18,6 +18,19 @@ type UseGameOfLifeOptions = {
 
 type SimulationStatus = "idle" | "running" | "paused" | "stable" | "empty" | "boundary-reached";
 
+export const getOrComputeNextGrid = (
+  cache: WeakMap<Grid, Grid>,
+  currentGrid: Grid,
+  computeNextGrid: (grid: Grid) => Grid = nextGeneration,
+) => {
+  const cached = cache.get(currentGrid);
+  if (cached) return cached;
+
+  const computed = computeNextGrid(currentGrid);
+  cache.set(currentGrid, computed);
+  return computed;
+};
+
 const gridsEqual = (firstGrid: Grid, secondGrid: Grid) => {
   if (firstGrid.length !== secondGrid.length) return false;
   if (firstGrid[0]?.length !== secondGrid[0]?.length) return false;
@@ -77,19 +90,25 @@ export function useGameOfLife({ initialRows = 50, initialCols = 70 }: UseGameOfL
   const runningRef = useRef(isRunning);
   const lastTimeRef = useRef(performance.now());
   const frameCountRef = useRef(0);
+  const nextGenerationCacheRef = useRef<WeakMap<Grid, Grid>>(new WeakMap());
+
+  const getNextGeneration = useCallback(
+    (currentGrid: Grid) => getOrComputeNextGrid(nextGenerationCacheRef.current, currentGrid),
+    [],
+  );
 
   runningRef.current = isRunning;
 
   const aliveCells = countAliveCells(grid);
-  const nextGrid = useMemo(() => nextGeneration(grid), [grid]);
   const simulationStatus = useMemo<SimulationStatus>(() => {
     if (aliveCells === 0) return "empty";
     if (hasLiveCellsOnEdge(grid)) return "boundary-reached";
-    if (gridsEqual(grid, nextGrid)) return "stable";
+    const isStable = gridsEqual(grid, getNextGeneration(grid));
+    if (isStable) return "stable";
     if (isRunning) return "running";
     if (generation === 0) return "idle";
     return "paused";
-  }, [aliveCells, generation, grid, isRunning, nextGrid]);
+  }, [aliveCells, generation, getNextGeneration, grid, isRunning]);
   const simulationStatusMessage = getSimulationStatusMessage(simulationStatus);
 
   const runSimulation = useCallback(() => {
@@ -103,11 +122,11 @@ export function useGameOfLife({ initialRows = 50, initialCols = 70 }: UseGameOfL
       lastTimeRef.current = now;
     }
 
-    setGrid((g) => nextGeneration(g));
+    setGrid((g) => getNextGeneration(g));
     setGeneration((g) => g + 1);
 
     setTimeout(runSimulation, speed);
-  }, [speed]);
+  }, [getNextGeneration, speed]);
 
   useEffect(() => {
     if (isRunning) {
@@ -135,9 +154,9 @@ export function useGameOfLife({ initialRows = 50, initialCols = 70 }: UseGameOfL
   }, [gridSize]);
 
   const step = useCallback(() => {
-    setGrid((g) => nextGeneration(g));
+    setGrid((g) => getNextGeneration(g));
     setGeneration((g) => g + 1);
-  }, []);
+  }, [getNextGeneration]);
 
   const play = useCallback(() => setIsRunning(true), []);
   const pause = useCallback(() => setIsRunning(false), []);
